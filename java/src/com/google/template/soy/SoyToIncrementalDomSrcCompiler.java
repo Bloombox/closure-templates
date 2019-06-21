@@ -68,6 +68,7 @@ public final class SoyToIncrementalDomSrcCompiler extends AbstractSoyCompiler {
   @Override
   void compile(SoyFileSet.Builder sfsBuilder) throws IOException {
     SoyFileSet sfs = sfsBuilder.build();
-    sfs.compileToIncrementalDomSrcFiles(outputPathFormat, new SoyIncrementalDomSrcOptions());
+    sfs.compileToIncrementalDomSrcFiles(outputPathFormat,
+      new SoyIncrementalDomSrcOptions(shouldPostfixNamespaces));
   }
 }

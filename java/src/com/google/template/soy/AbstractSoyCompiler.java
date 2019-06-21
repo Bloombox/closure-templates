@@ -139,6 +139,16 @@ abstract class AbstractSoyCompiler {
   private File loggingConfig = null;
 
   @Option(
+    name = "--shouldPostfixNamespaces",
+    usage =
+      "Directs the template compiler to postfix each generated template module or"
+        + " provide path with the type of the template. With regular JS templates,"
+        + " the namespace is unmodified, with Incremental DOM, this is the token"
+        + "`idom`. Defaults to `true`."
+  )
+  protected Boolean shouldPostfixNamespaces = true;
+
+  @Option(
     name = "--enableExperimentalFeatures",
     usage =
         "Enable experimental features that are not generally available. "

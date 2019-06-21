@@ -46,6 +46,9 @@ public final class SoyJsSrcOptions implements Cloneable {
   /** Whether we should generate Closure Library message definitions (i.e. goog.getMsg). */
   private boolean shouldGenerateGoogMsgDefs;
 
+  /** Whether we should postfix compiled template namespaces/modules with the template type. */
+  private boolean shouldPostfixNamespaces;
+
   /** Whether the Closure Library messages are external, i.e. "MSG_EXTERNAL_[soyGeneratedMsgId]". */
   private boolean googMsgsAreExternal;
 
@@ -65,6 +68,7 @@ public final class SoyJsSrcOptions implements Cloneable {
   private boolean useGoogIsRtlForBidiGlobalDir;
 
   public SoyJsSrcOptions() {
+    shouldPostfixNamespaces = false;
     shouldAllowDeprecatedSyntax = false;
     shouldProvideRequireSoyNamespaces = false;
     shouldProvideRequireJsFunctions = false;
@@ -78,6 +82,7 @@ public final class SoyJsSrcOptions implements Cloneable {
   }
 
   private SoyJsSrcOptions(SoyJsSrcOptions orig) {
+    this.shouldPostfixNamespaces = orig.shouldPostfixNamespaces;
     this.shouldAllowDeprecatedSyntax = orig.shouldAllowDeprecatedSyntax;
     this.shouldProvideRequireSoyNamespaces = orig.shouldProvideRequireSoyNamespaces;
     this.shouldProvideRequireJsFunctions = orig.shouldProvideRequireJsFunctions;
@@ -89,6 +94,24 @@ public final class SoyJsSrcOptions implements Cloneable {
     this.googMsgsAreExternal = orig.googMsgsAreExternal;
     this.bidiGlobalDir = orig.bidiGlobalDir;
     this.useGoogIsRtlForBidiGlobalDir = orig.useGoogIsRtlForBidiGlobalDir;
+  }
+
+  /**
+   * Sets whether namespaces generated for templates should be post-fixed with their type.
+   *
+   * @param shouldPostfixNamespaces The value to set.
+   */
+  public void setShouldPostfixNamespaces(boolean shouldPostfixNamespaces) {
+    this.shouldPostfixNamespaces = shouldPostfixNamespaces;
+  }
+
+  /**
+   * Sets whether to append type strings to generated module namespaces.
+   *
+   * @return Whether we should post-fix generated namespaces.
+   */
+  public boolean shouldPostfixNamespaces() {
+    return shouldPostfixNamespaces;
   }
 
   /**
@@ -344,6 +367,7 @@ public final class SoyJsSrcOptions implements Cloneable {
   @Override
   public final String toString() {
     return MoreObjects.toStringHelper(this)
+        .add("shouldPostfixNamespaces", shouldPostfixNamespaces)
         .add("shouldAllowDeprecatedSyntax", shouldAllowDeprecatedSyntax)
         .add("shouldProvideRequireSoyNamespaces", shouldProvideRequireSoyNamespaces)
         .add("shouldProvideRequireJsFunctions", shouldProvideRequireJsFunctions)

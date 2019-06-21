@@ -24,7 +24,15 @@ import com.google.template.soy.jssrc.SoyJsSrcOptions;
  * <p>Currently there are no options, this object exists for future expansion.
  */
 public final class SoyIncrementalDomSrcOptions {
-  public SoyIncrementalDomSrcOptions() {}
+  private final boolean shouldPostfixNamespaces;
+
+  public SoyIncrementalDomSrcOptions() {
+    this.shouldPostfixNamespaces = true;
+  }
+
+  public SoyIncrementalDomSrcOptions(boolean shouldPostfixNamespaces) {
+    this.shouldPostfixNamespaces = shouldPostfixNamespaces;
+  }
 
   /**
    * Convert to {@link SoyJsSrcOptions}. This is necessary since {@code incrementaldomsrc} reuses
@@ -32,6 +40,7 @@ public final class SoyIncrementalDomSrcOptions {
    */
   SoyJsSrcOptions toJsSrcOptions() {
     SoyJsSrcOptions jsSrcOptions = new SoyJsSrcOptions();
+    jsSrcOptions.setShouldPostfixNamespaces(shouldPostfixNamespaces);
     jsSrcOptions.setShouldAllowDeprecatedSyntax(false);
     jsSrcOptions.setShouldProvideRequireSoyNamespaces(false);
     jsSrcOptions.setShouldProvideRequireJsFunctions(false);
