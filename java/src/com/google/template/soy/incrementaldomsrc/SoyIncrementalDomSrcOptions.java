@@ -33,6 +33,7 @@ public final class SoyIncrementalDomSrcOptions {
   SoyJsSrcOptions toJsSrcOptions() {
     SoyJsSrcOptions jsSrcOptions = new SoyJsSrcOptions();
     // Only goog.module generation supported
+    jsSrcOptions.setShouldPostfixNamespaces(false);
     jsSrcOptions.setShouldGenerateGoogModules(true);
     jsSrcOptions.setShouldGenerateGoogMsgDefs(true);
     jsSrcOptions.setGoogMsgsAreExternal(true);
