@@ -251,7 +251,9 @@ public final class GenIncrementalDomCodeVisitor extends GenJsCodeVisitor {
    */
   @Override
   protected String getGoogModuleNamespace(String soyNamespace) {
-    return soyNamespace + NAMESPACE_EXTENSION;
+    if (this.jsSrcOptions.shouldPostfixNamespaces())
+      return soyNamespace + NAMESPACE_EXTENSION;
+    return soyNamespace;
   }
 
   @Override

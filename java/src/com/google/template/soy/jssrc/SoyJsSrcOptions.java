@@ -48,6 +48,9 @@ public final class SoyJsSrcOptions implements Cloneable {
    */
   private int bidiGlobalDir;
 
+  /** Whether we should postfix compiled template namespaces/modules with the template type. */
+  private boolean shouldPostfixNamespaces;
+
   /**
    * Whether to determine the bidi global direction at template runtime by evaluating
    * goog.i18n.bidi.IS_RTL. May only be true when both shouldGenerateGoogMsgDefs and either
@@ -58,6 +61,7 @@ public final class SoyJsSrcOptions implements Cloneable {
   public SoyJsSrcOptions() {
     depsStrategy = JsDepsStrategy.NAMESPACES;
 
+    shouldPostfixNamespaces = true;
     shouldGenerateGoogMsgDefs = false;
     googMsgsAreExternal = false;
     bidiGlobalDir = 0;
@@ -65,6 +69,7 @@ public final class SoyJsSrcOptions implements Cloneable {
   }
 
   private SoyJsSrcOptions(SoyJsSrcOptions orig) {
+    this.shouldPostfixNamespaces = orig.shouldPostfixNamespaces;
     this.depsStrategy = orig.depsStrategy;
     this.shouldGenerateGoogMsgDefs = orig.shouldGenerateGoogMsgDefs;
     this.googMsgsAreExternal = orig.googMsgsAreExternal;
@@ -204,6 +209,24 @@ public final class SoyJsSrcOptions implements Cloneable {
     return useGoogIsRtlForBidiGlobalDir;
   }
 
+  /**
+   * Sets whether namespaces generated for templates should be post-fixed with their type.
+   *
+   * @param shouldPostfixNamespaces The value to set.
+   */
+  public void setShouldPostfixNamespaces(boolean shouldPostfixNamespaces) {
+    this.shouldPostfixNamespaces = shouldPostfixNamespaces;
+  }
+
+  /**
+   * Sets whether to append type strings to generated module namespaces.
+   *
+   * @return Whether we should post-fix generated namespaces.
+   */
+  public boolean shouldPostfixNamespaces() {
+    return shouldPostfixNamespaces;
+  }
+
   @Override
   public final SoyJsSrcOptions clone() {
     return new SoyJsSrcOptions(this);
@@ -212,6 +235,7 @@ public final class SoyJsSrcOptions implements Cloneable {
   @Override
   public final String toString() {
     return MoreObjects.toStringHelper(this)
+        .add("shouldPostfixNamespaces", shouldPostfixNamespaces)
         .add("shouldProvideRequireSoyNamespaces", shouldProvideRequireSoyNamespaces())
         .add("shouldGenerateGoogMsgDefs", shouldGenerateGoogMsgDefs)
         .add("shouldGenerateGoogModules", shouldGenerateGoogModules())
