@@ -32,6 +32,21 @@ const Message = goog.require('jspb.Message');
 const {assert} = goog.require('goog.asserts');
 const {startsWith} = goog.require('goog.string');
 
+
+/**
+ * ID generator for soy operations.
+ *
+ * @idGenerator {xid}
+ * @param {!string} id Un-rewritten ID to use.
+ * @return {!string} ID to use in code (potentially rewritten).
+ */
+function xidGen(id) {
+  return id;
+}
+
+exports.xid = xidGen;
+
+
 /** @final */
 class ElementMetadata {
   /**
@@ -90,9 +105,10 @@ class Metadata {
 // NOTE: we need to use toLowerCase in case the xid contains upper case
 // characters, browsers normalize keys to their ascii lowercase versions when
 // accessing attributes via the programmatic APIs (as we do below).
-/** @package */ const ELEMENT_ATTR = 'data-soylog';
+/** @package */ const ELEMENT_ATTR = 'data-' + xidGen('soylog').toLowerCase();
 
-/** @package */ const FUNCTION_ATTR = 'data-soyloggingfunction-';
+/** @package */ const FUNCTION_ATTR =
+    'data-' + xidGen('soyloggingfunction').toLowerCase() + '-';
 
 /** Sets up the global metadata object before rendering any templates. */
 function setUpLogging() {
