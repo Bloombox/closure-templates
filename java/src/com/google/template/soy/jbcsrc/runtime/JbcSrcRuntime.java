@@ -327,12 +327,14 @@ public final class JbcSrcRuntime {
     // an optional map from a placeholder to another placeholder that must precede it.
     @Nullable SetMultimap<String, String> endPlaceholderToStartPlaceholder;
     private final long msgId;
+    private final boolean htmlEscape;
 
     public MsgRenderer(
         long msgId,
         ImmutableList<SoyMsgPart> msgParts,
         @Nullable ULocale locale,
-        int numPlaceholders) {
+        int numPlaceholders,
+        boolean htmlEscape) {
       // using a TEXT content kind which will cause our base class to box the value in a StringData
       // object
       super(ContentKind.TEXT);
@@ -340,6 +342,7 @@ public final class JbcSrcRuntime {
       this.msgParts = msgParts;
       this.locale = locale;
       this.placeholders = Maps.newLinkedHashMapWithExpectedSize(numPlaceholders);
+      this.htmlEscape = htmlEscape;
     }
 
     /**
@@ -361,6 +364,11 @@ public final class JbcSrcRuntime {
                 + " for key "
                 + placeholderName);
       }
+    }
+
+    public static String escapeHtml(String s) {
+      // Note that "&" is not replaced because the translation can contain HTML entities.
+      return s.replace("<", "&lt;");
     }
 
     /**
@@ -435,7 +443,11 @@ public final class JbcSrcRuntime {
       for (int i = partIndex; i < msgParts.size(); i++) {
         SoyMsgPart msgPart = msgParts.get(i);
         if (msgPart instanceof SoyMsgRawTextPart) {
-          out.append(((SoyMsgRawTextPart) msgPart).getRawText());
+          String s = ((SoyMsgRawTextPart) msgPart).getRawText();
+          if (htmlEscape) {
+            s = escapeHtml(s);
+          }
+          out.append(s);
         } else if (msgPart instanceof SoyMsgPlaceholderPart) {
           String placeholderName = ((SoyMsgPlaceholderPart) msgPart).getPlaceholderName();
           if (endPlaceholderToStartPlaceholder != null) {
@@ -468,8 +480,7 @@ public final class JbcSrcRuntime {
             RenderResult result = placeholderValue.renderAndResolve(out, /* isLast= */ false);
             if (!result.isDone()) {
               // store partIndex as i + 1 so that after the placeholder is done we proceed to the
-              // next
-              // part
+              // next part
               partIndex = i + 1;
               pendingRender = placeholderValue;
               return result;
@@ -510,8 +521,9 @@ public final class JbcSrcRuntime {
         long msgId,
         ImmutableList<SoyMsgPart> msgParts,
         @Nullable ULocale locale,
-        int numPlaceholders) {
-      super(msgId, msgParts, locale, numPlaceholders);
+        int numPlaceholders,
+        boolean htmlEscape) {
+      super(msgId, msgParts, locale, numPlaceholders, htmlEscape);
     }
 
     @Override
@@ -520,7 +532,7 @@ public final class JbcSrcRuntime {
         // plural/select messages always start with a sequence of plural and select values.
         // Additionally, we are guaranteed (by contract with the gencode) that the plural/select
         // variables are resolved.  So we need to do that now.
-        // NOTE: that in the most common case, this loop only executes ones and at maximum it will
+        // NOTE: that in the most common case, this loop only executes once and at maximum it will
         // loop 3 times.  We do know statically what the first iteration will be, but it is not
         // possible to know anything beyond that.
         ImmutableList<SoyMsgPart> parts = this.msgParts;

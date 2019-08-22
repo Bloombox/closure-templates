@@ -18,8 +18,7 @@ package com.google.template.soy.jbcsrc.api;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.template.soy.data.UnsafeSanitizedContentOrdainer.ordainAsSafe;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.SettableFuture;
@@ -50,6 +49,13 @@ public class SoySauceTest {
     SoyFileSet.Builder builder = SoyFileSet.builder();
     builder.add(SoySauceTest.class.getResource("strict.soy"));
     sauce = builder.build().compileTemplates();
+  }
+
+  /** Verifies SoySauce#hasTemplate(String). */
+  @Test
+  public void testHasTemplate() {
+    assertTrue(sauce.hasTemplate("strict_test.helloHtml"));
+    assertFalse(sauce.hasTemplate("i.do.not.exist"));
   }
 
   /** Verifies SoySauce.Renderer#renderHtml(). */
@@ -267,15 +273,19 @@ public class SoySauceTest {
         .isEqualTo("Hello world");
     assertThat(sauce.renderTemplate("strict_test.helloHtml").renderStrict().get())
         .isEqualTo(ordainAsSafe("Hello world", ContentKind.HTML));
+
+    // Downcast to an impl because #setExpectedContentKind has been removed from the interface
+    // internally (but still exists for open source).
+    SoySauceImpl sauceImpl = (SoySauceImpl) sauce;
     assertThat(
-            sauce
+            sauceImpl
                 .renderTemplate("strict_test.helloHtml")
                 .setExpectedContentKind(ContentKind.TEXT)
                 .renderStrict()
                 .get())
         .isEqualTo(SanitizedContents.unsanitizedText("Hello world"));
     try {
-      sauce
+      sauceImpl
           .renderTemplate("strict_test.helloHtml")
           .setExpectedContentKind(ContentKind.JS)
           .renderStrict()
@@ -309,8 +319,12 @@ public class SoySauceTest {
           .isEqualTo(
               "Expected template 'strict_test.helloJs' to be kind=\"html\" but was kind=\"js\"");
     }
+
+    // Downcast to an impl because #setExpectedContentKind has been removed from the interface
+    // internally (but still exists for open source).
+    SoySauceImpl sauceImpl = (SoySauceImpl) sauce;
     assertThat(
-            sauce
+            sauceImpl
                 .renderTemplate("strict_test.helloJs")
                 .setExpectedContentKind(ContentKind.JS)
                 .renderStrict()
@@ -318,13 +332,13 @@ public class SoySauceTest {
         .isEqualTo(ordainAsSafe("'Hello world'", ContentKind.JS));
     assertEquals(
         ordainAsSafe("'Hello world'", ContentKind.TEXT),
-        sauce
+        sauceImpl
             .renderTemplate("strict_test.helloJs")
             .setExpectedContentKind(ContentKind.TEXT) // TEXT always works
             .renderStrict()
             .get());
     assertThat(
-            sauce
+            sauceImpl
                 .renderTemplate("strict_test.helloJs")
                 .setExpectedContentKind(ContentKind.TEXT)
                 .render()

@@ -6,7 +6,7 @@
   <name>Closure Templates</name>
   <groupId>com.google.template</groupId>
   <artifactId>soy</artifactId>
-  <version>2019-04-18</version>
+  <version>2019-08-22</version>
   <description>
     Closure Templates are a client-side and server-side templating system.
   </description>
@@ -638,6 +638,23 @@
                 <transformer
                   implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <mainClass>com.google.template.soy.SoyToPySrcCompiler</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+          <execution>
+            <id>SoyHeaderCompiler</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedClassifierName>SoyHeaderCompiler</shadedClassifierName>
+              <transformers>
+                <transformer
+                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.google.template.soy.SoyHeaderCompiler</mainClass>
                 </transformer>
               </transformers>
             </configuration>
