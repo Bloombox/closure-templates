@@ -42,9 +42,9 @@ goog.require('proto.webutil.html.types.TrustedResourceUrlProto');
  */
 security.html.jspbconversions.safeHtmlFromProto = function(proto) {
   return goog.html.uncheckedconversions.
-      safeHtmlFromStringKnownToSatisfyTypeContract(
-          goog.string.Const.from('From proto message. b/12014412'),
-          proto.getPrivateDoNotAccessOrElseSafeHtmlWrappedValue() || '');
+  safeHtmlFromStringKnownToSatisfyTypeContract(
+      goog.string.Const.from('From proto message. b/12014412'),
+      proto.getPrivateDoNotAccessOrElseSafeHtmlWrappedValue() || '');
 };
 
 
@@ -140,9 +140,9 @@ security.html.jspbconversions.safeScriptToProto = function(script) {
  */
 security.html.jspbconversions.safeStyleFromProto = function(proto) {
   return goog.html.uncheckedconversions.
-      safeStyleFromStringKnownToSatisfyTypeContract(
-          goog.string.Const.from('From proto message. b/12014412'),
-          proto.getPrivateDoNotAccessOrElseSafeStyleWrappedValue() || '');
+  safeStyleFromStringKnownToSatisfyTypeContract(
+      goog.string.Const.from('From proto message. b/12014412'),
+      proto.getPrivateDoNotAccessOrElseSafeStyleWrappedValue() || '');
 };
 
 
@@ -239,9 +239,9 @@ security.html.jspbconversions.safeStyleSheetToProto = function(styleSheet) {
  */
 security.html.jspbconversions.safeUrlFromProto = function(proto) {
   return goog.html.uncheckedconversions.
-      safeUrlFromStringKnownToSatisfyTypeContract(
-          goog.string.Const.from('From proto message. b/12014412'),
-          proto.getPrivateDoNotAccessOrElseSafeUrlWrappedValue() || '');
+  safeUrlFromStringKnownToSatisfyTypeContract(
+      goog.string.Const.from('From proto message. b/12014412'),
+      proto.getPrivateDoNotAccessOrElseSafeUrlWrappedValue() || '');
 };
 
 
@@ -288,10 +288,10 @@ security.html.jspbconversions.safeUrlToProto = function(url) {
  */
 security.html.jspbconversions.trustedResourceUrlFromProto = function(proto) {
   return goog.html.uncheckedconversions.
-      trustedResourceUrlFromStringKnownToSatisfyTypeContract(
-          goog.string.Const.from('From proto message. b/12014412'),
-          proto.getPrivateDoNotAccessOrElseTrustedResourceUrlWrappedValue() ||
-              '');
+  trustedResourceUrlFromStringKnownToSatisfyTypeContract(
+      goog.string.Const.from('From proto message. b/12014412'),
+      proto.getPrivateDoNotAccessOrElseTrustedResourceUrlWrappedValue() ||
+      '');
 };
 
 

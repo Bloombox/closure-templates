@@ -30,23 +30,7 @@ goog.module.declareLegacyNamespace();
 
 const Message = goog.require('jspb.Message');
 const {assert} = goog.require('goog.asserts');
-const {getFirstElementChild, getNextElementSibling} = goog.require('goog.dom');
 const {startsWith} = goog.require('goog.string');
-
-
-/**
- * ID generator for soy operations.
- *
- * @idGenerator {xid}
- * @param {!string} id Un-rewritten ID to use.
- * @return {!string} ID to use in code (potentially rewritten).
- */
-function xidGen(id) {
-  return id;
-}
-
-exports.xid = xidGen;
-
 
 /** @final */
 class ElementMetadata {
@@ -106,17 +90,16 @@ class Metadata {
 // NOTE: we need to use toLowerCase in case the xid contains upper case
 // characters, browsers normalize keys to their ascii lowercase versions when
 // accessing attributes via the programmatic APIs (as we do below).
-/** @package */ const ELEMENT_ATTR = 'data-' + xidGen('soylog').toLowerCase();
+/** @package */ const ELEMENT_ATTR = 'data-soylog';
 
-/** @package */ const FUNCTION_ATTR =
-    'data-' + xidGen('soyloggingfunction').toLowerCase() + '-';
+/** @package */ const FUNCTION_ATTR = 'data-soyloggingfunction-';
 
 /** Sets up the global metadata object before rendering any templates. */
 function setUpLogging() {
   assert(
       !$$hasMetadata(),
       'Logging metadata already exists. Please call ' +
-          'soy.velog.tearDownLogging after rendering a template.');
+      'soy.velog.tearDownLogging after rendering a template.');
   metadata = new Metadata();
 }
 
@@ -128,7 +111,7 @@ function tearDownLogging() {
   assert(
       $$hasMetadata(),
       'Logging metadata does not exist. ' +
-          'Please call soy.velog.setUpLogging before rendering a template.');
+      'Please call soy.velog.setUpLogging before rendering a template.');
   metadata = null;
 }
 
@@ -161,11 +144,9 @@ function setMetadataTestOnly(testdata) {
  */
 function $$getLoggingAttribute(veData, logOnly) {
   if ($$hasMetadata()) {
-    const dataIdx =
-        metadata.elements.push(
-            new ElementMetadata(
-                veData.getVe().getId(), veData.getData(), logOnly))
-        - 1;
+    const dataIdx = metadata.elements.push(new ElementMetadata(
+        veData.getVe().getId(), veData.getData(), logOnly)) -
+        1;
     // Insert a whitespace at the beginning. In VeLogInstrumentationVisitor,
     // we insert the return value of this method as a plain string instead of a
     // HTML attribute, therefore the desugaring pass does not know how to handle
@@ -213,55 +194,56 @@ function $$getLoggingFunctionAttribute(name, args, attr) {
  * @param {!Logger} logger The logger that actually does stuffs.
  */
 function emitLoggingCommands(element, logger) {
-  const keep = preOrderDomTraversal(element, logger);
-  if (!keep) {
-    element.parentElement.removeChild(element);
+  if (element instanceof Element) {
+    visit(element, logger);
+  } else {
+    const children = Array.from(element.childNodes);
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i];
+      if (child instanceof Element) {
+        visit(child, logger);
+      }
+    }
   }
 }
 
 /**
- * Helper method that traverses the DOM tree in pre-order and returns false
- * if the current element is log only.
  *
- * @param {!Element|!DocumentFragment} element The rendered HTML element.
+ * @param {!Node} element The rendered HTML element.
  * @param {!Logger} logger The logger that actually does stuffs.
- * @return {boolean} indicating whether or not current should be removed.
  */
-function preOrderDomTraversal(element, logger) {
+function visit(element, logger) {
   let logIndex = -1;
-  if (element instanceof Element) {
+  if (!(element instanceof Element)) {
+    return;
+  }
+  if (element.hasAttribute(ELEMENT_ATTR)) {
     logIndex = getDataAttribute(element, ELEMENT_ATTR);
     assert(metadata.elements.length > logIndex, 'Invalid logging attribute.');
     if (logIndex != -1) {
       logger.enter(metadata.elements[logIndex]);
     }
-    replaceFunctionAttributes(element, logger);
   }
-  let current = getFirstElementChild(element);
-  while (current) {
-    // TODO(user): Maybe we should pass around logOnly so that children
-    // of logOnly VEs do not need to manipulate the DOM.
-    const keep = preOrderDomTraversal(current, logger);
-    const next = getNextElementSibling(current);
-    // Remove the current element after we obtain nextElementSibling.
-    if (!keep) {
-      // IE does not support ChildNode.remove().
-      element.removeChild(current);
+  replaceFunctionAttributes(element, logger);
+  if (element.childNodes) {
+    const children = Array.from(element.childNodes);
+    for (let i = 0; i < children.length; i++) {
+      visit(children[i], logger);
     }
-    current = next;
   }
-  if (element instanceof Element) {
-    if (logIndex != -1) {
-      logger.exit();
-      // Remove logOnly elements from the DOM.
-      if (metadata.elements[logIndex].logOnly) {
-        return false;
-      }
-    }
-    // Always remove the data attribute.
+  if (logIndex === -1) {
+    return;
+  }
+  logger.exit();
+  if (metadata.elements[logIndex].logOnly) {
+    element.parentNode.removeChild(element);
+    return;
+  }
+  if (element.tagName !== 'VELOG') {
     element.removeAttribute(ELEMENT_ATTR);
+  } else {
+    element.parentNode.replaceChild(element.firstElementChild, element);
   }
-  return true;
 }
 
 /**
@@ -316,7 +298,6 @@ function getDataAttribute(element, attr) {
  * @interface
  */
 class Logger {
-
   /**
    * Called when a `{velog}` statement is entered.
    * @param {!ElementMetadata} elementMetadata

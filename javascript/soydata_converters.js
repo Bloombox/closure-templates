@@ -183,7 +183,7 @@ soydata.packSanitizedTrustedResourceUriToProtoSoyRuntimeOnly = function(
     sanitizedTrustedResourceUri) {
   if (sanitizedTrustedResourceUri !== '' &&
       !(sanitizedTrustedResourceUri instanceof
-        goog.soy.data.SanitizedTrustedResourceUri)) {
+          goog.soy.data.SanitizedTrustedResourceUri)) {
     throw new Error(
         'expected SanitizedTrustedResourceUri, got ' +
         goog.debug.runtimeType(sanitizedTrustedResourceUri));
@@ -213,9 +213,9 @@ soydata.packSanitizedUriToProtoSoyRuntimeOnly = function(sanitizedUri) {
         'expected SanitizedUri, got ' + goog.debug.runtimeType(sanitizedUri));
   }
   var safeUrl = goog.html.uncheckedconversions
-                    .safeUrlFromStringKnownToSatisfyTypeContract(
-                        goog.string.Const.from('from Soy SanitizedUri object'),
-                        sanitizedUri ? sanitizedUri.getContent() : '');
+      .safeUrlFromStringKnownToSatisfyTypeContract(
+          goog.string.Const.from('from Soy SanitizedUri object'),
+          sanitizedUri ? sanitizedUri.getContent() : '');
   return security.html.jspbconversions.safeUrlToProto(safeUrl);
 };
 

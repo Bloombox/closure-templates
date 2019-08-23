@@ -537,7 +537,7 @@ soy.$$strContains = function(/** string */ haystack, /** string */ needle) {
  * For objects of type `SanitizedContent`, the contents are used to determine
  * the boolean value; this is because the outer `SanitizedContent` object
  * instance is always truthy (unless it's null).
- * 
+ *
  * @param {*} arg The argument to coerce.
  * @return {boolean}
  */
@@ -613,7 +613,7 @@ soy.$$registerDelegateFn = function(
     // Registering same-priority function: error.
     throw Error(
         'Encountered two active delegates with the same priority ("' +
-            delTemplateId + ':' + delTemplateVariant + '").');
+        delTemplateId + ':' + delTemplateVariant + '").');
   } else {
     // Registering lower-priority function: do nothing.
   }
@@ -639,7 +639,7 @@ soy.$$getDelegateFn = function(
     delTemplateId, delTemplateVariant, allowsEmptyDefault) {
 
   var delFn = soy.$$DELEGATE_REGISTRY_FUNCTIONS_[
-      'key_' + delTemplateId + ':' + delTemplateVariant];
+  'key_' + delTemplateId + ':' + delTemplateVariant];
   if (! delFn && delTemplateVariant != '') {
     // Fallback to empty variant.
     delFn = soy.$$DELEGATE_REGISTRY_FUNCTIONS_['key_' + delTemplateId + ':'];
@@ -754,35 +754,35 @@ soydata.$$makeSanitizedContentFactoryForInternalBlocks_ = function(ctor) {
  */
 soydata.$$makeSanitizedContentFactoryWithDefaultDirOnlyForInternalBlocks_ =
     function(ctor) {
-  /**
-   * @param {string} content
-   * @constructor
-   * @extends {goog.soy.data.SanitizedContent}
-   */
-  function InstantiableCtor(content) {
-    /** @override */
-    this.content = content;
-  }
-  InstantiableCtor.prototype = ctor.prototype;
-  /**
-   * Creates a ctor-type SanitizedContent instance.
-   *
-   * @param {?} content The content to put in the instance.
-   * @return {!goog.soy.data.SanitizedContent|!soydata.$$EMPTY_STRING_} The new
-   *     instance, or an empty string. A new instance is actually of type T
-   *     above (ctor's type, a descendant of SanitizedContent), but there's no
-   *     way to express that here.
-   */
-  function sanitizedContentFactory(content) {
-    var contentString = String(content);
-    if (!contentString) {
-      return soydata.$$EMPTY_STRING_.VALUE;
-    }
-    var result = new InstantiableCtor(contentString);
-    return result;
-  }
-  return sanitizedContentFactory;
-};
+      /**
+       * @param {string} content
+       * @constructor
+       * @extends {goog.soy.data.SanitizedContent}
+       */
+      function InstantiableCtor(content) {
+        /** @override */
+        this.content = content;
+      }
+      InstantiableCtor.prototype = ctor.prototype;
+      /**
+       * Creates a ctor-type SanitizedContent instance.
+       *
+       * @param {?} content The content to put in the instance.
+       * @return {!goog.soy.data.SanitizedContent|!soydata.$$EMPTY_STRING_} The new
+       *     instance, or an empty string. A new instance is actually of type T
+       *     above (ctor's type, a descendant of SanitizedContent), but there's no
+       *     way to express that here.
+       */
+      function sanitizedContentFactory(content) {
+        var contentString = String(content);
+        if (!contentString) {
+          return soydata.$$EMPTY_STRING_.VALUE;
+        }
+        var result = new InstantiableCtor(contentString);
+        return result;
+      }
+      return sanitizedContentFactory;
+    };
 
 
 /**
@@ -1054,10 +1054,10 @@ soy.$$stripHtmlTags = function(value, opt_tagWhitelist) {
   if (!opt_tagWhitelist) {
     // If we have no white-list, then use a fast track which elides all tags.
     return String(value).replace(soy.esc.$$HTML_TAG_REGEX_, '')
-        // This is just paranoia since callers should normalize the result
-        // anyway, but if they didn't, it would be necessary to ensure that
-        // after the first replace non-tag uses of < do not recombine into
-        // tags as in "<<foo>script>alert(1337)</<foo>script>".
+    // This is just paranoia since callers should normalize the result
+    // anyway, but if they didn't, it would be necessary to ensure that
+    // after the first replace non-tag uses of < do not recombine into
+    // tags as in "<<foo>script>alert(1337)</<foo>script>".
         .replace(soy.esc.$$LT_REGEX_, '&lt;');
   }
 
@@ -1071,43 +1071,43 @@ soy.$$stripHtmlTags = function(value, opt_tagWhitelist) {
   var tags = [];
   var attrs = [];
   html = html.replace(
-    soy.esc.$$HTML_TAG_REGEX_,
-    function(tok, tagName) {
-      if (tagName) {
-        tagName = tagName.toLowerCase();
-        if (opt_tagWhitelist.hasOwnProperty(tagName) &&
-            opt_tagWhitelist[tagName]) {
-          var isClose = tok.charAt(1) == '/';
-          var index = tags.length;
-          var start = '</';
-          var attributes = '';
-          if (!isClose) {
-            start = '<';
-            var match;
-            while ((match = soy.esc.$$HTML_ATTRIBUTE_REGEX_.exec(tok))) {
-              if (match[1] && match[1].toLowerCase() == 'dir') {
-                var dir = match[2];
-                if (dir) {
-                  if (dir.charAt(0) == '\'' || dir.charAt(0) == '"') {
-                    dir = dir.substr(1, dir.length - 2);
+      soy.esc.$$HTML_TAG_REGEX_,
+      function(tok, tagName) {
+        if (tagName) {
+          tagName = tagName.toLowerCase();
+          if (opt_tagWhitelist.hasOwnProperty(tagName) &&
+              opt_tagWhitelist[tagName]) {
+            var isClose = tok.charAt(1) == '/';
+            var index = tags.length;
+            var start = '</';
+            var attributes = '';
+            if (!isClose) {
+              start = '<';
+              var match;
+              while ((match = soy.esc.$$HTML_ATTRIBUTE_REGEX_.exec(tok))) {
+                if (match[1] && match[1].toLowerCase() == 'dir') {
+                  var dir = match[2];
+                  if (dir) {
+                    if (dir.charAt(0) == '\'' || dir.charAt(0) == '"') {
+                      dir = dir.substr(1, dir.length - 2);
+                    }
+                    dir = dir.toLowerCase();
+                    if (dir == 'ltr' || dir == 'rtl' || dir == 'auto') {
+                      attributes = ' dir="' + dir + '"';
+                    }
                   }
-                  dir = dir.toLowerCase();
-                  if (dir == 'ltr' || dir == 'rtl' || dir == 'auto') {
-                    attributes = ' dir="' + dir + '"';
-                  }
+                  break;
                 }
-                break;
               }
+              soy.esc.$$HTML_ATTRIBUTE_REGEX_.lastIndex = 0;
             }
-            soy.esc.$$HTML_ATTRIBUTE_REGEX_.lastIndex = 0;
+            tags[index] = start + tagName + '>';
+            attrs[index] = attributes;
+            return '[' + index + ']';
           }
-          tags[index] = start + tagName + '>';
-          attrs[index] = attributes;
-          return '[' + index + ']';
         }
-      }
-      return '';
-    });
+        return '';
+      });
 
   // Escape HTML special characters. Now there are no '<' in html that could
   // start a tag.
@@ -1493,18 +1493,6 @@ soy.$$filterTrustedResourceUri = function(value) {
 
 
 /**
- * For any resource string/variable which has
- * |blessStringAsTrustedResuorceUrlForLegacy directive return the value as is.
- *
- * @param {?} value The value to be blessed. Might not be a string
- * @return {?} value Return current value.
- */
-soy.$$blessStringAsTrustedResourceUrlForLegacy = function(value) {
-  return value;
-};
-
-
-/**
  * Allows only data-protocol image URI's.
  *
  * @param {?} value The value to process. May not be a string, but the value
@@ -1775,8 +1763,8 @@ soy.$$bidiFormatterCache_ = {};
  */
 soy.$$getBidiFormatterInstance_ = function(bidiGlobalDir) {
   return soy.$$bidiFormatterCache_[bidiGlobalDir] ||
-         (soy.$$bidiFormatterCache_[bidiGlobalDir] =
-             new goog.i18n.BidiFormatter(bidiGlobalDir));
+      (soy.$$bidiFormatterCache_[bidiGlobalDir] =
+          new goog.i18n.BidiFormatter(bidiGlobalDir));
 };
 
 
@@ -1916,10 +1904,10 @@ soy.$$bidiSpanWrap = function(bidiGlobalDir, text) {
   // SanitizedContentOperator, but this does not mean that the input has to be
   // HTML SanitizedContent.
   var html = goog.html.uncheckedconversions.
-      safeHtmlFromStringKnownToSatisfyTypeContract(
-          goog.string.Const.from(
-              'Soy |bidiSpanWrap is applied on an autoescaped text.'),
-          String(text));
+  safeHtmlFromStringKnownToSatisfyTypeContract(
+      goog.string.Const.from(
+          'Soy |bidiSpanWrap is applied on an autoescaped text.'),
+      String(text));
   var wrappedHtml = formatter.spanWrapSafeHtmlWithKnownDir(
       soydata.getContentDir(text), html);
 
