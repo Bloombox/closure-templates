@@ -1,5 +1,5 @@
 
-VERSION ?= b22
+VERSION ?= b23
 JAVA_VERSION ?= 2019-08-23-SNAPSHOT
 
 all: build rename seal publish
