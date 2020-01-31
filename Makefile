@@ -1,12 +1,12 @@
 
-VERSION ?= b23
+VERSION ?= b25
 JAVA_VERSION ?= 2019-08-23-SNAPSHOT
 
 all: build rename seal publish
 
 build:
 	@echo "Building Soy..."
-	@mvn clean package install
+	@mvn clean package install test
 
 rename:
 	@echo "Pushing Bloombox software JARs..."
